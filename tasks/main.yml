@@ -1,15 +1,22 @@
 ---
-- name: Install Dependencies
+- name: Install Go Dependencies (apt)
   apt:
     name: golang-go
     state: present
     update_cache: true
   become: yes
+  when: ansible_facts['os_family'] == "Debian"
 
+- name: Install Go Dependencies (homebrew)
+  homebrew:
+    name: golang
+    state: present
+  when: ansible_facts['os_family'] == "Darwin"
+  
 - name: Install powerline-go
-  command: /usr/bin/go get -u github.com/justjanne/powerline-go
+  command: go get -u github.com/justjanne/powerline-go
   environment:
-    GO_PATH: $HOME/go
+    GOPATH: "{{ ansible_env.HOME }}/go"
   args:
-    creates: go/bin/powerline-go
+    creates: "{{ ansible_env.HOME }}/go/bin/powerline-go"
 
