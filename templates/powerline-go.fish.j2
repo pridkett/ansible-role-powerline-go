@@ -1,0 +1,10 @@
+# ########################################################### #
+# this file is maintained by ansible-powerline-go             #
+# see: https://github.com/pridkett/ansible-powerline-go       #
+# changes may be overwritten by future invocations of ansible #
+# ########################################################### #
+
+set -x GOPATH $HOME/go
+function fish_prompt
+    eval $GOPATH/bin/powerline-go -colorize-hostname -error $status -shell bare
+end

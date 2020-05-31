@@ -1,0 +1,43 @@
+# ########################################################### #
+# this file is maintained by ansible-powerline-go             #
+# see: https://github.com/pridkett/ansible-powerline-go       #
+# changes may be overwritten by future invocations of ansible #
+# ########################################################### #
+
+export GOPATH="$HOME/go"
+
+# configure suport for powerline-go, make this conditional on
+# powerline-go being installed in the user GOPATH
+if [ -f $GOPATH/bin/powerline-go ]; then
+    zmodload zsh/datetime
+
+    function preexec() {
+        __TIMER=$EPOCHREALTIME
+    }
+
+    function powerline_precmd() {
+        local __ERRCODE=$?
+        local __DURATION=0
+
+        if [ -n $__TIMER ]; then
+            local __ERT=$EPOCHREALTIME
+            __DURATION="$(($__ERT - ${__TIMER:-__ERT}))"
+        fi
+        PS1="$($GOPATH/bin/powerline-go -colorize-hostname -modules duration -duration $__DURATION -error $__ERRCODE -shell zsh)"
+        PS1="$($GOPATH/bin/powerline-go -colorize-hostname -error $__ERRCODE -duration $__DURATION -shell zsh)"
+        unset __TIMER
+    }
+
+    function install_powerline_precmd() {
+        for s in "${precmd_functions[@]}"; do
+            if [ "$s" = "powerline_precmd" ]; then
+                return
+            fi
+        done
+        precmd_functions+=(powerline_precmd)
+    }
+
+    if [ "$TERM" != "linux" ]; then
+        install_powerline_precmd
+    fi
+fi

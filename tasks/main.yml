@@ -20,3 +20,16 @@
   args:
     creates: "{{ ansible_env.HOME }}/go/bin/powerline-go"
 
+- name: Install fish shell support
+  template:
+    src: powerline-go.fish.j2
+    dest: "{{ fish_shell_script_path }}"
+  when: powerline_go.install_fish is defined and powerline_go.install_fish == True
+  tags: configure
+
+- name: Install powerline-go zsh support
+  template:
+    src: powerline-go.zsh.j2
+    dest: "{{ zsh_shell_script_path }}"
+  when: powerline_go.install_zsh is defined and powerline_go.install_zsh == True
+  tags: configure
