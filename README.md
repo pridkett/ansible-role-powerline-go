@@ -1,38 +1,65 @@
-Role Name
-=========
+powerline-go
+============
 
-A brief description of the role goes here.
+Compiles and installs [powerline-go](https://github.com/justjanne/powerline-go) and optionally installs handlers for `zsh` and `fish`.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+None
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+* `fish_duration_patch`
+  * Type: Boolean
+  * Usage: if true, patches powerline-go to remove microseconds. This is because fish's duration is only at the millisecond level.
+  * Default: undefined (false)
+
+* `install_fish`
+  * Type: Boolean
+  * Usage: if true, creates `powerline-go.fish` in `~/.config/fish/fish.d`
+  * Default: undefined (false)
+
+* `install_zsh`
+  * Type: Boolean
+  * Usage: if true, creates `powerline-go.zsh` in `~/.zshrc`
+  * Default: undefined (false)
+
+* `modules`
+  * Type: string
+  * Usage: an optional string of modules to use to override the default configuration of modules
+  * Default: undefined (use defaults from powerline-go)
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None
 
 Example Playbook
 ----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- hosts:
+    - local
+  roles:
+    - powerline-go
+  vars:
+    powerline_go:
+      install_zsh: true
+      install_fish: true
+      fish_duration_patch: true
+      modules: venv,user,host,ssh,cwd,perms,git,hg,duration,exit,root
+```
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Patrick Wagstrom &lt;patrick@wagstrom.net&gt;
