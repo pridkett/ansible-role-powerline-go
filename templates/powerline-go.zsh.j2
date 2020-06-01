@@ -23,8 +23,13 @@ if [ -f $GOPATH/bin/powerline-go ]; then
             local __ERT=$EPOCHREALTIME
             __DURATION="$(($__ERT - ${__TIMER:-__ERT}))"
         fi
-        PS1="$($GOPATH/bin/powerline-go -colorize-hostname -modules duration -duration $__DURATION -error $__ERRCODE -shell zsh)"
-        PS1="$($GOPATH/bin/powerline-go -colorize-hostname -error $__ERRCODE -duration $__DURATION -shell zsh)"
+
+        {% if powerline_go.modules is defined %}
+        MODULES="-modules {{ powerline_go.modules }}"
+        {% else %}
+        MODULES=""
+        {% endif %}
+        PS1="$($GOPATH/bin/powerline-go -colorize-hostname $MODULES -error $__ERRCODE -duration $__DURATION -shell zsh)"
         unset __TIMER
     }
 

@@ -6,5 +6,11 @@
 
 set -x GOPATH $HOME/go
 function fish_prompt
-    eval $GOPATH/bin/powerline-go -colorize-hostname -error $status -shell bare
+    set duration (math -s6 "$CMD_DURATION / 1000")
+{% if powerline_go.modules is defined %}
+    set MODULES -modules {{ powerline_go.modules }}
+{% else %}
+    set MODULES ""
+{% endif %}
+    eval $GOPATH/bin/powerline-go -colorize-hostname -duration $duration -error $status $MODULES -shell bare
 end

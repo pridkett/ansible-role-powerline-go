@@ -13,14 +13,31 @@
     state: present
   when: ansible_facts['os_family'] == "Darwin"
   
-- name: Install powerline-go
-  command: go get -u github.com/justjanne/powerline-go
+- name: Download powerline-go sources
+  command: go get -d github.com/justjanne/powerline-go
   environment:
     GOPATH: "{{ ansible_env.HOME }}/go"
   args:
-    creates: "{{ ansible_env.HOME }}/go/bin/powerline-go"
+    creates: "{{ ansible_env.HOME }}/go/src/github.com/justjanne/powerline-go/powerline.go"
+  tags: install
 
-- name: Install fish shell support
+- name: Patch powerline-go duration module for fish shell
+  patch:
+    src: segment-duration.go.patch
+    dest: "{{ ansible_env.HOME }}/go/src/github.com/justjanne/powerline-go/segment-duration.go"
+  when: powerline_go.fish_duration_patch is defined and powerline_go.fish_duration_patch == True
+  tags: install
+
+- name: Build powerline-go
+  command: go install
+  environment:
+    GOPATH: "{{ ansible_env.HOME }}/go"
+  args:
+    chdir: "{{ ansible_env.HOME }}/go/src/github.com/justjanne/powerline-go"
+    creates: "{{ ansible_env.HOME }}/go/bin/powerline-go"
+  tags: install
+
+- name: Install powerline-go fish shell support
   template:
     src: powerline-go.fish.j2
     dest: "{{ fish_shell_script_path }}"
