@@ -29,7 +29,7 @@ if [ -f $GOPATH/bin/powerline-go ]; then
         {% else %}
         MODULES=""
         {% endif %}
-        PS1="$($GOPATH/bin/powerline-go -colorize-hostname $MODULES -error $__ERRCODE -duration $__DURATION -shell zsh)"
+        PS1="$($GOPATH/bin/powerline-go -hostname-only-if-ssh -colorize-hostname $MODULES -error $__ERRCODE -duration $__DURATION -shell zsh)"
         unset __TIMER
     }
 

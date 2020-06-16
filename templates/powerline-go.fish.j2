@@ -12,5 +12,5 @@ function fish_prompt
 {% else %}
     set MODULES ""
 {% endif %}
-    eval $GOPATH/bin/powerline-go -colorize-hostname -duration $duration -error $status $MODULES -shell bare
+    eval $GOPATH/bin/powerline-go -hostname-only-if-ssh -colorize-hostname -duration $duration -error $status $MODULES -shell bare
 end
