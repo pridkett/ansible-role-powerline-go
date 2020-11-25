@@ -37,16 +37,41 @@
     creates: "{{ ansible_env.HOME }}/go/bin/powerline-go"
   tags: install
 
-- name: Install powerline-go fish shell support
-  template:
-    src: powerline-go.fish.j2
-    dest: "{{ fish_shell_script_path }}"
-  when: powerline_go.install_fish is defined and powerline_go.install_fish == True
-  tags: configure
 
-- name: Install powerline-go zsh support
-  template:
-    src: powerline-go.zsh.j2
-    dest: "{{ zsh_shell_script_path }}"
+- block:
+  - name: Check if fish script path exists
+    stat:
+      path: "{{ fish_shell_script_path | dirname }}"
+    register: path_details
+  - name: Create fish script path
+    file:
+      path: "{{ fish_shell_script_path | dirname }}"
+      state: directory
+      mode: 0755
+    when: path_details.stat.exists == false
+  - name: Install powerline-go fish shell support
+    template:
+      src: powerline-go.fish.j2
+      dest: "{{ fish_shell_script_path }}"
+    tags: configure
+  when: powerline_go.install_fish is defined and powerline_go.install_fish == True
+
+- block:
+  - name: Check if zsh script path exists
+    stat:
+      path: "{{ zsh_shell_script_path | dirname }}"
+    register: path_details
+  - name: Create zsh script path
+    file:
+      path: "{{ zsh_shell_script_path | dirname }}"
+      state: directory
+      mode: 0755
+    when: path_details.stat.exists == false
+  - name: Install powerline-go zsh support
+    template:
+      src: powerline-go.zsh.j2
+      dest: "{{ zsh_shell_script_path }}"
+    tags: configure
   when: powerline_go.install_zsh is defined and powerline_go.install_zsh == True
-  tags: configure
+
+
