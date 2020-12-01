@@ -5,6 +5,10 @@
 # ########################################################### #
 
 set -x GOPATH $HOME/go
+
+{% if powerline_go.fish_additional is defined %}
+{{ powerline_go.fish_additional }}
+{% endif %}
 function fish_prompt
     set duration (math -s6 "$CMD_DURATION / 1000")
 {% if powerline_go.modules is defined %}
