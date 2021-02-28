@@ -10,11 +10,16 @@ set -x GOPATH $HOME/go
 {{ powerline_go.fish_additional }}
 {% endif %}
 function fish_prompt
+    set errstatus $status
     set duration (math -s6 "$CMD_DURATION / 1000")
+    # make it so error status only appears the first time a command has an error
+    if [ "$duration" = "0" ]
+        set errstatus 0
+    end
 {% if powerline_go.modules is defined %}
     set MODULES -modules {{ powerline_go.modules }}
 {% else %}
     set MODULES ""
 {% endif %}
-    eval $GOPATH/bin/powerline-go -hostname-only-if-ssh -colorize-hostname -duration $duration -error $status $MODULES -shell bare
+    eval $GOPATH/bin/powerline-go -hostname-only-if-ssh -colorize-hostname -error $errstatus -duration $duration -jobs (jobs -p | wc -l) $MODULES
 end
