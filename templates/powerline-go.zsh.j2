@@ -23,26 +23,32 @@ if [ -f $GOPATH/bin/powerline-go ]; then
             local __ERT=$EPOCHREALTIME
             __DURATION="$(($__ERT - ${__TIMER:-__ERT}))"
         fi
+        unset __TIMER
+
+        # don't display the error code after the first time
+	if [ $__DURATION = "0." ]; then
+            __ERRCODE=0
+	fi
 
         {% if powerline_go.modules is defined %}
-        MODULES="-modules {{ powerline_go.modules }}"
+        local __MODULES="{{ powerline_go.modules }}"
         {% else %}
-        MODULES=""
+	local __MODULES="venv,user,host,ssh,cwd,perms,git,hg,duration,exit,root"
         {% endif %}
-        PS1="$($GOPATH/bin/powerline-go -hostname-only-if-ssh -colorize-hostname $MODULES -error $__ERRCODE -duration $__DURATION -shell zsh)"
-        unset __TIMER
+ 
+        PS1="$($GOPATH/bin/powerline-go -hostname-only-if-ssh -colorize-hostname -duration-min 0.001 -error $__ERRCODE -duration $__DURATION -jobs ${${(%):%j}:-0} -modules $__MODULES)"
     }
-
+ 
     function install_powerline_precmd() {
-        for s in "${precmd_functions[@]}"; do
-            if [ "$s" = "powerline_precmd" ]; then
-                return
-            fi
-        done
-        precmd_functions+=(powerline_precmd)
+      for s in "${precmd_functions[@]}"; do
+        if [ "$s" = "powerline_precmd" ]; then
+          return
+        fi
+      done
+      precmd_functions+=(powerline_precmd)
     }
-
-    if [ "$TERM" != "linux" ]; then
+    
+    if [ "$TERM" != "linux" ] && [ -f "$GOPATH/bin/powerline-go" ]; then
         install_powerline_precmd
     fi
 fi
