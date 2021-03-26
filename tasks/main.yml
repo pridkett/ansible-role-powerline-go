@@ -12,14 +12,13 @@
     name: golang
     state: present
   when: ansible_facts['os_family'] == "Darwin"
-  
+ 
 - name: Download powerline-go sources
-  command: go get -d github.com/justjanne/powerline-go
-  environment:
-    GOPATH: "{{ ansible_env.HOME }}/go"
-  args:
-    creates: "{{ ansible_env.HOME }}/go/src/github.com/justjanne/powerline-go/powerline.go"
-  tags: install
+  git:
+    repo: https://github.com/justjanne/powerline-go.git
+    dest: "{{ ansible_env.HOME }}/go/src/github.com/justjanne/powerline-go"
+    version: main
+    force: true
 
 - name: Patch powerline-go duration module for fish shell
   patch:
@@ -36,7 +35,6 @@
     chdir: "{{ ansible_env.HOME }}/go/src/github.com/justjanne/powerline-go"
     creates: "{{ ansible_env.HOME }}/go/bin/powerline-go"
   tags: install
-
 
 - block:
   - name: Check if fish script path exists
