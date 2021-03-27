@@ -13,9 +13,14 @@ function fish_prompt
     set errstatus $status
     set duration (math -s6 "$CMD_DURATION / 1000")
     # make it so error status only appears the first time a command has an error
+    # this also blows up CMD_DURATION, so we use LAST_CMD_DURATION if you really
+    # need the time
     if [ "$duration" = "0" ]
         set errstatus 0
+    else
+        set -gx LAST_CMD_DURATION $CMD_DURATION
     end
+    set -gx CMD_DURATION ""
 {% if powerline_go.modules is defined %}
     set MODULES -modules {{ powerline_go.modules }}
 {% else %}
