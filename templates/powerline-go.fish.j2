@@ -20,7 +20,7 @@ function fish_prompt
     else
         set -gx LAST_CMD_DURATION $CMD_DURATION
     end
-    set -gx CMD_DURATION ""
+    set -gx CMD_DURATION 0
 {% if powerline_go.modules is defined %}
     set MODULES -modules {{ powerline_go.modules }}
 {% else %}
