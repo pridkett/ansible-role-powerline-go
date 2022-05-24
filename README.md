@@ -11,14 +11,9 @@ None
 Role Variables
 --------------
 
-* `fish_duration_patch`
-  * Type: Boolean
-  * Usage: if true, patches powerline-go to remove microseconds. This is because fish's duration is only at the millisecond level.
-  * Default: undefined (false)
-
 * `install_fish`
   * Type: Boolean
-  * Usage: if true, creates `powerline-go.fish` in `~/.config/fish/fish.d`
+  * Usage: if true, creates `powerline-go.fish` in `~/.config/fish/fish.d`. This will also make `powerline-go` use the `-duration-low-precision` flag to account for the lower resolution timer in fish.
   * Default: undefined (false)
 
 * `install_zsh`
@@ -50,7 +45,6 @@ Including an example of how to use your role (for instance, with variables passe
     powerline_go:
       install_zsh: true
       install_fish: true
-      fish_duration_patch: true
       modules: venv,user,host,ssh,cwd,perms,git,hg,duration,exit,root
 ```
 

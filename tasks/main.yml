@@ -1,40 +1,21 @@
 ---
-- name: Install Go Dependencies (apt)
-  apt:
-    name: golang-go
-    state: present
-    update_cache: true
-  become: yes
-  when: ansible_facts['os_family'] == "Debian"
+- name: load source vars
+  with_first_found:
+    - '../vars/architecture/{{ ansible_userspace_architecture | lower }}.yml'
+    - ../vars/architecture/default.yml
+  include_vars: '{{ item }}'
 
-- name: Install Go Dependencies (homebrew)
-  homebrew:
-    name: golang
-    state: present
-  when: ansible_facts['os_family'] == "Darwin"
- 
-- name: Download powerline-go sources
-  git:
-    repo: https://github.com/justjanne/powerline-go.git
-    dest: "{{ ansible_env.HOME }}/go/src/github.com/justjanne/powerline-go"
-    version: main
-    force: true
+- name: load sha256sums
+  with_first_found:
+    - '../vars/versions/powerline-go-{{ ansible_system | lower }}-{{ powerline_go_arch }}.{{ powerline_go_version}}.yml'
+    - '../vars/versions/default.yml'
+  include_vars: '{{ item }}'
 
-- name: Patch powerline-go duration module for fish shell
-  patch:
-    src: segment-duration.go.patch
-    dest: "{{ ansible_env.HOME }}/go/src/github.com/justjanne/powerline-go/segment-duration.go"
-  when: powerline_go.fish_duration_patch is defined and powerline_go.fish_duration_patch == True
-  tags: install
-
-- name: Build powerline-go
-  command: go install
-  environment:
-    GOPATH: "{{ ansible_env.HOME }}/go"
-  args:
-    chdir: "{{ ansible_env.HOME }}/go/src/github.com/justjanne/powerline-go"
-    creates: "{{ ansible_env.HOME }}/go/bin/powerline-go"
-  tags: install
+- name: Download and install powerline-go binary
+  get_url: 
+    url: "https://github.com/justjanne/powerline-go/releases/download/{{ powerline_go_version }}/powerline-go-{{ ansible_system | lower}}-{{ powerline_go_arch}}"
+    dest: "{{ ansible_env.HOME }}/go/bin/powerline-go"
+    checksum: 'sha256:{{ powerline_go_sha256_sum }}'
 
 - block:
   - name: Check if fish script path exists

@@ -12,11 +12,7 @@ galaxy_info:
       - all
   - name: macOS
     versions:
-      - Sierra
-      - High Sierra
-      - Mojave
-      - Catalina
-
+      - all
   galaxy_tags: []
 
 dependencies: []
