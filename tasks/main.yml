@@ -1,7 +1,7 @@
 ---
 - name: load source vars
   with_first_found:
-    - '../vars/architecture/{{ ansible_userspace_architecture | lower }}.yml'
+    - '../vars/architecture/{{ ansible_architecture | lower }}.yml'
     - ../vars/architecture/default.yml
   include_vars: '{{ item }}'
 
