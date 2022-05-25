@@ -1,0 +1,43 @@
+# ########################################################### #
+# this file is maintained by ansible-powerline-go             #
+# see: https://github.com/pridkett/ansible-powerline-go       #
+# changes may be overwritten by future invocations of ansible #
+# ########################################################### #
+
+# Load powerline-go prompt
+function Out-PowerlineGoPrompt {
+    $pwd = $ExecutionContext.SessionState.Path.CurrentLocation
+
+    # see: https://learn-powershell.net/2012/06/26/quick-hits-how-long-did-that-last-command-take/
+    if ((Get-History).length -eq 0) {
+        $duration = 0
+    } else {
+        $duration = ((Get-History)[-1].EndExecutionTime - (Get-History)[-1].StartExecutionTime).TotalSeconds
+    }
+    
+    $jobs = (Get-Job -state Running).length
+    {% if powerline_go.modules is defined %}
+    $modules = "{{ powerline_go.modules }}"
+    {% else %}
+    $modules = "venv,user,host,ssh,cwd,perms,git,hg,jobs,duration,exit,root"
+    {% endif %}
+
+
+    $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $startInfo.FileName = "$HOME/go/bin/powerline-go"
+    $startInfo.Arguments = "-shell bare -modules $modules -duration $duration -jobs $jobs"
+    $startInfo.Environment["TERM"] = "xterm-256color"
+    $startInfo.CreateNoWindow = $true
+    $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.UseShellExecute = $false
+    $startInfo.WorkingDirectory = $pwd
+    $process = New-Object System.Diagnostics.Process
+    $process.StartInfo = $startInfo
+    $process.Start() | Out-Null
+    $standardOut = $process.StandardOutput.ReadToEnd()
+    $process.WaitForExit()
+    $standardOut
+}
+
+Export-ModuleMember -Function Out-PowerlineGoPrompt

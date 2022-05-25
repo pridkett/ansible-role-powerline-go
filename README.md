@@ -20,6 +20,10 @@ Role Variables
   * Type: Boolean
   * Usage: if true, creates `powerline-go.zsh` in `~/.zshrc`
   * Default: undefined (false)
+  
+* `install_pwsh`
+  * Type: Boolean
+  * Usage: if true, creates `powerline-go.psm1` in `~/.config/powershell` and sets prompt in `profile.ps1`.
 
 * `modules`
   * Type: string
@@ -45,6 +49,7 @@ Including an example of how to use your role (for instance, with variables passe
     powerline_go:
       install_zsh: true
       install_fish: true
+	  install_pwsh: true
       modules: venv,user,host,ssh,cwd,perms,git,hg,duration,exit,root
 ```
 

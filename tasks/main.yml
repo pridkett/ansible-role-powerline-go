@@ -53,4 +53,34 @@
     tags: configure
   when: powerline_go.install_zsh is defined and powerline_go.install_zsh == True
 
+- block:
+  - name: Check is pwsh script path exists
+    stat:
+      path: "{{ pwsh_shell_script_path | dirname }}"
+    register: path_details
+  - name: Create pwsh script path
+    file:
+      path: "{{ pwsh_shell_script_path | dirname }}"
+      state: directory
+      mode: 0755
+    when: path_details.stat.exists == false
+  - name: Install powerline-go pwsh support module
+    template:
+      src: powerline-go.psm1.j2
+      dest: "{{ pwsh_shell_script_path }}/powerline-go.psm1"
+    tags: configure
+  - name: Install powerline-go pwsh support to profile.ps1
+    blockinfile:
+      path: "{{ pwsh_shell_script_path }}/profile.ps1"
+      block: |
+        Import-Module (Join-Path -Path (Split-Path $PROFILE) -child "powerline-go.psm1")
 
+        function global:prompt {
+            Out-PowerlineGoPrompt
+        }
+      marker: "# *** {mark} ANSIBLE MANAGED BLOCK ***"
+      state: present
+      insertafter: EOF
+      create: yes
+      
+  when: powerline_go.install_pwsh is defined and powerline_go.install_pwsh == True
