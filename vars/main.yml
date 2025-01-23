@@ -4,4 +4,4 @@ fish_shell_script_path: "{{ ansible_env.HOME }}/.config/fish/fish.d/powerline-go
 zsh_shell_script_path: "{{ ansible_env.HOME }}/.zshrc.d/powerine-go.zsh"
 pwsh_shell_script_path: "{{ ansible_env.HOME }}/.config/powershell"
 
-powerline_go_version: "v1.22.1"
+powerline_go_version: "v1.25"
