@@ -59,13 +59,20 @@
   when: powerline_go.install_zsh is defined and powerline_go.install_zsh == True
 
 - block:
+    - name: check if pwsh target directory exists
+      file:
+        path: "{{ pwsh_shell_script_path }}"
+        state: directory
+        mode: 0755
+      tags:
+        - configure
     - name: Check is pwsh script path exists
       stat:
-        path: "{{ pwsh_shell_script_path | dirname }}"
+        path: "{{ pwsh_shell_script_path }}"
       register: path_details
     - name: Create pwsh script path
       file:
-        path: "{{ pwsh_shell_script_path | dirname }}"
+        path: "{{ pwsh_shell_script_path }}"
         state: directory
         mode: 0755
       when: path_details.stat.exists == false
